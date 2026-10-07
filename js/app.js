@@ -166,15 +166,19 @@
     if (current === "about") return renderAbout();
     const s = PRIMA.SCREENS[current];
     const crumbs = (parents[current] || []).map(t).join(" › ");
+    const help = PRIMA.HELP[current];
+    helpPinned = false;
     view.innerHTML = `
       <div class="crumbs">${crumbs}</div>
       <div class="screen-head">
-        <div>
-          <h1>${t("s." + current + ".long")}</h1>
-          <div class="orig">${t("ui.origTitle")} «${s.orig}»</div>
+        <h1>${t("s." + current + ".long")}<button type="button" class="help-btn" aria-expanded="false"
+            aria-controls="helpPop" aria-label="${t("ui.help")}" title="${t("ui.help")}">?</button></h1>
+        <div class="help-pop" id="helpPop" role="tooltip" hidden>
+          <p>${help[PRIMA.lang] || help.en}</p>
+          <div class="help-formula-title">${t("ui.formulas")}</div>
+          <div class="help-formula">${help.formula.map(f => `<div>${f}</div>`).join("")}</div>
         </div>
       </div>
-      <div class="formula">${s.formula.split(/\s{3,}/).map(f => `<span>${f}</span>`).join("")}</div>
       <div class="toolbar">
         <button class="btn primary" data-act="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span class="lbl">${t("ui.addRow")}</span></button>
         <button class="btn" data-act="clear"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span class="lbl">${t("ui.clear")}</span></button>
@@ -195,6 +199,43 @@
         <span><span class="legend-swatch" style="background:var(--result-bg);border:1px solid var(--border)"></span>${t("ui.legendResult")}</span>
       </div>`;
   }
+
+  // ---------- "?" help popover: opens on hover, stays open after a click ----------
+  let helpPinned = false, helpTimer = null;
+  const helpEls = () => [$(".help-btn", view), $("#helpPop", view)];
+  function showHelp() {
+    const [btn, pop] = helpEls();
+    if (!btn) return;
+    clearTimeout(helpTimer);
+    pop.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+  }
+  function hideHelp(force) {
+    const [btn, pop] = helpEls();
+    if (!btn || (helpPinned && !force)) return;
+    helpPinned = false;
+    pop.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+  }
+  const canHover = matchMedia("(hover: hover)").matches;
+  view.addEventListener("mouseover", e => {
+    if (canHover && e.target.closest(".help-btn, .help-pop")) showHelp();
+  });
+  view.addEventListener("mouseout", e => {
+    if (!canHover || !e.target.closest(".help-btn, .help-pop")) return;
+    if (e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".help-btn, .help-pop")) return;
+    helpTimer = setTimeout(() => hideHelp(false), 200);
+  });
+  document.addEventListener("click", e => {
+    if (e.target.closest(".help-btn")) {
+      const open = helpPinned;
+      helpPinned = !open;
+      if (open) hideHelp(true); else showHelp();
+    } else if (!e.target.closest(".help-pop")) {
+      hideHelp(true);
+    }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hideHelp(true); });
 
   function unitLabel(col) { return t("unit." + col.unit); }
 

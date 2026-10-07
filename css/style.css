@@ -197,14 +197,32 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 
 .crumbs { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
 .screen-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 24px; margin-bottom: 14px; }
+.screen-head { position: relative; }
 .screen-head h1 { font-size: 22px; line-height: 1.25; margin: 0; font-weight: 650; }
-.screen-head .orig { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
-.formula {
-  margin: 0 0 16px; padding: 10px 14px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  font-family: var(--mono); font-size: 13px; color: var(--text-muted);
-  line-height: 1.7;
-  display: flex; flex-wrap: wrap; gap: 2px 28px;
+
+/* "?" help button and popover */
+.help-btn {
+  display: inline-grid; place-items: center;
+  width: 22px; height: 22px; margin-left: 10px; vertical-align: 3px;
+  border: 1.5px solid var(--border-strong); border-radius: 50%;
+  background: var(--surface); color: var(--text-muted);
+  font: 700 13px/1 var(--font); cursor: help;
+}
+.help-btn:hover, .help-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
+.help-pop {
+  position: absolute; z-index: 15; top: calc(100% + 8px); left: 0;
+  width: min(520px, 100%);
+  padding: 14px 16px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, .14), 0 2px 6px rgba(16, 24, 40, .08);
+  font-size: 14px; line-height: 1.55;
+}
+.help-pop p { margin: 0 0 12px; }
+.help-formula-title { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
+.help-formula {
+  padding: 8px 12px; border-radius: 8px; background: var(--surface-2);
+  font: 13px/1.7 var(--mono); overflow-x: auto; white-space: nowrap;
 }
 
 /* Toolbar */
