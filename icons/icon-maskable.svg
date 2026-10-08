@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Full-bleed square; the drawing sits inside the 80 % safe zone for Android masks -->
+  <rect width="64" height="64" fill="#1f6feb"/>
+  <g transform="translate(32 32) scale(.78) translate(-32 -32)">
+    <line x1="32" y1="10" x2="32" y2="54" stroke="#fff" stroke-opacity=".45" stroke-width="1.5"/>
+    <line x1="7" y1="32" x2="57" y2="32" stroke="#fff" stroke-opacity=".45" stroke-width="1.5"/>
+    <ellipse cx="32" cy="32" rx="22" ry="17" fill="none" stroke="#fff" stroke-width="3"/>
+    <line x1="32" y1="38.3" x2="55.5" y2="18.6" stroke="#8fe3b0" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="50.5" cy="22.8" r="3.6" fill="#fff"/>
+  </g>
+</svg>

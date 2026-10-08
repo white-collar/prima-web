@@ -419,10 +419,7 @@
   function renderHome() {
     view.innerHTML = `
       <section class="title-page">
-        <svg class="title-mark" viewBox="0 0 32 32" aria-hidden="true">
-          <ellipse cx="16" cy="16" rx="14" ry="11"/>
-          <path d="M16 5v22M2 16h28"/>
-        </svg>
+        <img class="title-mark" src="icons/icon.svg" alt="" width="120" height="120">
         <h1 class="title-name">PRIMA</h1>
         <p class="title-sub">${t("app.subtitle")}</p>
       </section>`;
