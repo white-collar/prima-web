@@ -152,17 +152,19 @@
 
   function route() {
     const id = location.hash.slice(1);
-    current = (id in PRIMA.SCREENS || id === "about") ? id : "radii";
+    current = (id in PRIMA.SCREENS || id === "about" || id === "home") ? id : "radii";
     // Make sure the active item is visible in the tree.
     (parents[current] || []).forEach(g => {
       if (!expanded[g]) { expanded[g] = true; }
     });
     buildTree();
     renderView();
+    closeNav();
     $("#main").scrollTop = 0;
   }
 
   function renderView() {
+    if (current === "home") return renderHome();
     if (current === "about") return renderAbout();
     const s = PRIMA.SCREENS[current];
     const crumbs = (parents[current] || []).map(t).join(" › ");
@@ -411,6 +413,19 @@
       save();
       rerenderTable();
     });
+  }
+
+  // ---------- Title page (opened by clicking the logo) ----------
+  function renderHome() {
+    view.innerHTML = `
+      <section class="title-page">
+        <svg class="title-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <ellipse cx="16" cy="16" rx="14" ry="11"/>
+          <path d="M16 5v22M2 16h28"/>
+        </svg>
+        <h1 class="title-name">PRIMA</h1>
+        <p class="title-sub">${t("app.subtitle")}</p>
+      </section>`;
   }
 
   // ---------- About ----------
