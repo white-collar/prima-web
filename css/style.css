@@ -211,7 +211,8 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
 .help-btn:hover, .help-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
 .help-pop {
   position: absolute; z-index: 15; top: calc(100% + 8px); left: 0;
-  width: min(520px, 100%);
+  width: min(560px, 100%);
+  max-height: min(78vh, 760px); overflow-y: auto;
   padding: 14px 16px;
   background: var(--surface); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius);
@@ -219,10 +220,34 @@ svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; 
   font-size: 14px; line-height: 1.55;
 }
 .help-pop p { margin: 0 0 12px; }
+.help-figure { margin: 0 0 12px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+/* Diagram colours: blue = given, green = computed (same as the tables) */
+.dg { display: block; width: 100%; height: auto; fill: none; stroke: none; font: 13px var(--font); }
+.dg .ln { stroke: var(--text-muted); stroke-width: 1.3; fill: none; }
+.dg .faint { stroke: var(--border-strong); stroke-width: 1; fill: none; }
+.dg .in { stroke: var(--accent); stroke-width: 2; fill: none; }
+.dg .out { stroke: var(--result-text); stroke-width: 2; fill: none; }
+.dg .thick { stroke-width: 3; }
+.dg .dash { stroke-dasharray: 5 4; }
+.dg .ah { fill: var(--text-muted); }
+.dg .ah-in { fill: var(--accent); }
+.dg .ah-out { fill: var(--result-text); }
+.dg .dot-in { fill: var(--accent); }
+.dg .dot-out { fill: var(--result-text); }
+.dg .dot-stage { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+.dg .sheet { fill: var(--surface); stroke: var(--text-muted); stroke-width: 1.5; }
+.dg .region { fill: var(--result-bg); stroke: var(--result-text); stroke-width: 2; }
+.dg text { stroke: none; }
+.dg .tx { fill: var(--text-muted); }
+.dg .tx-sm { fill: var(--text-muted); font-size: 12px; }
+.dg .tx-strong { fill: var(--text); font-weight: 600; }
+.dg .tx-in { fill: var(--accent-text); font-weight: 600; }
+.dg .tx-out { fill: var(--result-text); font-weight: 600; }
+.dg .big { font-size: 17px; }
 .help-formula-title { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 6px; }
 .help-formula {
   padding: 8px 12px; border-radius: 8px; background: var(--surface-2);
-  font: 13px/1.7 var(--mono); overflow-x: auto; white-space: nowrap;
+  font: 13px/1.7 var(--mono); overflow-x: auto; white-space: pre;
 }
 
 /* Toolbar */

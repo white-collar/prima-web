@@ -175,6 +175,7 @@
             aria-controls="helpPop" aria-label="${t("ui.help")}" title="${t("ui.help")}">?</button></h1>
         <div class="help-pop" id="helpPop" role="tooltip" hidden>
           <p>${help[PRIMA.lang] || help.en}</p>
+          ${diagramHTML(current)}
           <div class="help-formula-title">${t("ui.formulas")}</div>
           <div class="help-formula">${help.formula.map(f => `<div>${f}</div>`).join("")}</div>
         </div>
@@ -198,6 +199,14 @@
         <span>${t("ui.hintAngle")}</span>
         <span><span class="legend-swatch" style="background:var(--result-bg);border:1px solid var(--border)"></span>${t("ui.legendResult")}</span>
       </div>`;
+  }
+
+  // Schematic figure for the popover, with its few words translated.
+  function diagramHTML(id) {
+    const svg = PRIMA.DIAGRAMS && PRIMA.DIAGRAMS[id];
+    if (!svg) return "";
+    const words = PRIMA.DIAGRAM_WORDS[PRIMA.lang] || PRIMA.DIAGRAM_WORDS.en;
+    return `<div class="help-figure">${svg.replace(/\{(\w+)\}/g, (m, k) => words[k] ?? m)}</div>`;
   }
 
   // ---------- "?" help popover: opens on hover, stays open after a click ----------

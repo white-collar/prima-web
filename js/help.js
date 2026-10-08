@@ -130,3 +130,10 @@ PRIMA.HELP = {
     uk: "Щоб використати лінію, виміряну на еліпсоїді, на площині Гаусса–Крюгера, вводять дві поправки. Поправки в напрямки δ12 і δ21 — кут між кривою зображення геодезичної лінії і прямою хордою. Поправка у відстань Δs спричинена масштабом проєкції m, що зростає з віддаленням від осьового меридіана. Координати вводяться в кілометрах.",
   },
 };
+
+// Words used inside the diagrams (js/diagrams.js); everything else there is symbols.
+PRIMA.DIAGRAM_WORDS = {
+  en: { eq: "equator", merid: "meridian", par: "parallel", geod: "geodesic", chord: "chord", sheet: "map sheet", given: "given", computed: "computed" },
+  ru: { eq: "экватор", merid: "меридиан", par: "параллель", geod: "геодезическая", chord: "хорда", sheet: "лист карты", given: "дано", computed: "вычисляется" },
+  uk: { eq: "екватор", merid: "меридіан", par: "паралель", geod: "геодезична", chord: "хорда", sheet: "аркуш карти", given: "дано", computed: "обчислюється" },
+};
