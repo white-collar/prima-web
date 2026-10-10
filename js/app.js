@@ -376,16 +376,65 @@
         rerenderTable({ r: tables[current].length - 1, c: 0 });
         break;
       case "clear":
-        if (confirm(t("ui.confirmClear"))) { tables[current] = []; save(); rerenderTable({ r: 0, c: 0 }); }
+        askConfirm(t("ui.confirmClear")).then(yes => {
+          if (yes) { tables[current] = []; save(); rerenderTable({ r: 0, c: 0 }); }
+        });
         break;
       case "examples":
         tables[current] = tables[current].concat(examples(current)); save(); rerenderTable();
         break;
       case "import": $('[data-act="file"]', view).click(); break;
       case "export": exportCsv(); break;
-      case "print": window.print(); break;
+      case "print":
+        if (PRIMA.desktop.active) PRIMA.desktop.print().catch(err => toast(String(err)));
+        else window.print();
+        break;
     }
   });
+
+  // ---------- Small dialogs: confirmation and notification ----------
+  // In-page replacements for confirm(), which an app window may not show.
+  function askConfirm(message) {
+    return new Promise(resolve => {
+      const box = document.createElement("div");
+      box.className = "modal-scrim";
+      box.innerHTML = `<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="modalMsg">
+          <p id="modalMsg"></p>
+          <div class="modal-actions">
+            <button class="btn" data-answer="no">${t("ui.cancel")}</button>
+            <button class="btn primary" data-answer="yes">${t("ui.ok")}</button>
+          </div>
+        </div>`;
+      box.querySelector("p").textContent = message;
+      const done = yes => { box.remove(); document.removeEventListener("keydown", onKey, true); resolve(yes); };
+      const onKey = e => {
+        if (e.key === "Escape") { e.stopPropagation(); done(false); }
+        if (e.key === "Enter") { e.preventDefault(); done(true); }
+      };
+      box.addEventListener("click", e => {
+        const b = e.target.closest("[data-answer]");
+        if (b) done(b.dataset.answer === "yes");
+        else if (e.target === box) done(false);
+      });
+      document.addEventListener("keydown", onKey, true);
+      document.body.appendChild(box);
+      box.querySelector('[data-answer="yes"]').focus();
+    });
+  }
+
+  let toastTimer = null;
+  function toast(message) {
+    let el = document.getElementById("toast");
+    if (!el) {
+      el = Object.assign(document.createElement("div"), { id: "toast", className: "toast" });
+      el.setAttribute("role", "status");
+      document.body.appendChild(el);
+    }
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 5000);
+  }
 
   // ---------- CSV ----------
   function exportCsv() {
@@ -395,8 +444,15 @@
       s.inputs.map((c, i) => displayInput(c, r.inputs[i] || "")).concat(
         (computeRow(s, r) || s.outputs.map(() => "")).map(v => (v === "—" ? "" : v)))));
     const csv = lines.map(l => l.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+    const name = `prima-${current}.csv`;
+    if (PRIMA.desktop.active) {   // the app window cannot download files: save to Downloads
+      PRIMA.desktop.save(name, "﻿" + csv)
+        .then(path => toast(`${t("ui.savedTo")} ${path}`))
+        .catch(err => toast(String(err)));
+      return;
+    }
     const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
-    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `prima-${current}.csv` });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: name });
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }

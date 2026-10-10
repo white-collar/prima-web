@@ -395,6 +395,31 @@ table.grid {
   .toolbar .btn { padding: 0 10px; }
 }
 
+/* ---------- Confirmation dialog and notification ---------- */
+.modal-scrim {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center; padding: 16px;
+  background: rgba(10, 15, 25, .35);
+}
+.modal {
+  width: min(420px, 100%); padding: 18px 20px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, .2);
+}
+.modal p { margin: 0 0 16px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.toast {
+  position: fixed; z-index: 60; left: 50%; bottom: 20px;
+  max-width: min(560px, calc(100vw - 32px));
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  padding: 10px 16px; border-radius: var(--radius);
+  background: var(--text); color: var(--surface);
+  font-size: 13.5px; overflow-wrap: anywhere;
+  transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
 /* ---------- Print ---------- */
 @media print {
   .topbar, .sidebar, .scrim, .toolbar, .table-foot, .act { display: none !important; }

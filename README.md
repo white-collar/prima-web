@@ -48,6 +48,7 @@ The algorithms and the structure of the program are theirs; this is a port made 
 | `js/i18n.js` | interface texts in EN / RU / UA |
 | `js/app.js` | tree menu, table editor, language and theme switching |
 | `icons/`, `manifest.webmanifest` | app icon (SVG sources and PNG sizes from `tools/make_icons.sh`) and web app manifest |
+| `src-tauri/`, `js/desktop.js` | desktop app (Tauri): native shell and page integration |
 | `tests/` | engine tests and their reference data |
 
 ## Run locally
@@ -57,6 +58,38 @@ Open `index.html` in a browser, or serve the folder:
 ```bash
 python3 -m http.server 8000
 ```
+
+## Desktop app (macOS, Windows, Linux)
+
+The same app is also packaged as a native desktop program with [Tauri](https://tauri.app):
+a small native window (about 3 MB) around the files above, using the system's web engine.
+
+- **Download:** installers are attached to each [GitHub Release](https://github.com/white-collar/prima-web/releases).
+  - macOS (Apple Silicon and Intel): `.dmg`. The app isn't signed, so the first time right-click PRIMA.app → **Open**.
+  - Windows: `.msi` or `-setup.exe`. If SmartScreen warns, click **More info → Run anyway**.
+  - Linux: `.AppImage`, `.deb` or `.rpm`.
+- **In the app**, printing opens the system print dialog, CSV export saves to your Downloads folder, and links to other sites open in your browser.
+- **Code:** `src-tauri/` (Rust shell with a few native commands in `src/lib.rs`), `js/desktop.js` (page side; does nothing in a browser).
+
+Build it yourself (needs [Rust](https://rustup.rs) and Node.js):
+
+```bash
+npm install
+```
+
+```bash
+npm run tauri build
+```
+
+Self-test of the packaged app (macOS): launches it, checks the engine and every screen, and exits.
+
+```bash
+PRIMA_SELF_TEST=1 src-tauri/target/release/bundle/macos/PRIMA.app/Contents/MacOS/prima
+```
+
+**Releasing:** push a tag such as `v1.0.1`. The *Desktop apps* workflow builds all platforms and attaches
+the installers to a draft release; publish it on the Releases page. Keep the version in
+`src-tauri/tauri.conf.json` in step with the tag.
 
 ## Tests
 

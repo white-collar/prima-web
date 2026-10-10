@@ -1,0 +1,77 @@
+name: Desktop apps
+
+# Builds the desktop app (Tauri) for macOS, Windows and Linux.
+# - Push a tag like v1.0.0  → builds and attaches the installers to a draft
+#   GitHub Release (publish it on the Releases page when you're happy).
+# - Run manually (Actions → Desktop apps → Run workflow) → builds and keeps
+#   the installers as workflow artifacts, without a release.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest          # one universal app for Apple Silicon and Intel
+            args: --target universal-apple-darwin
+            rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - platform: windows-latest
+            args: ""
+            rust-targets: ""
+          - platform: ubuntu-22.04
+            args: ""
+            rust-targets: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Linux system libraries
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-targets }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install the Tauri CLI
+        run: npm ci
+
+      - name: Run the engine tests
+        run: npm test
+
+      - name: Build
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: ${{ matrix.args }}
+          tagName: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || '' }}
+          releaseName: "PRIMA ${{ github.ref_name }}"
+          releaseBody: |
+            Desktop version of PRIMA — spheroidal geodesy on the Krasovsky 1940 ellipsoid.
+
+            - **macOS** (Apple Silicon and Intel): `.dmg`. The app is not signed: the first time, right-click PRIMA.app → Open.
+            - **Windows**: `.msi` or `-setup.exe`. If SmartScreen warns, click More info → Run anyway.
+            - **Linux**: `.AppImage`, `.deb` or `.rpm`.
+
+            Web version: https://white-collar.github.io/prima-web/
+          releaseDraft: true
+          uploadWorkflowArtifacts: ${{ !startsWith(github.ref, 'refs/tags/') }}

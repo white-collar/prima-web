@@ -1,0 +1,14 @@
+{
+  "name": "prima-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PRIMA — spheroidal geodesy on the Krasovsky 1940 ellipsoid (web and desktop app)",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build:site": "node tools/build-site.mjs",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.12.2"
+  }
+}
